@@ -16,3 +16,6 @@ OpenFOAM 7.x is required to compile the software.
 Users are referred to the below reference for details on the MP-PIC-PBE method.
 
 S. H. Kim, R. D. Braatz, and Jay H Lee, “Multi-scale fluid dynamics simulation based on MP-PIC-PBE method for PMMA suspension polymerization,” Comput. Chem. Eng., 152, 107391, 2021.
+
+# Notice
+When working 'wmake', some errors can occur regarding link files in the lnInclude folder at intermediate folder. In this case, replace the existing link files with the link files in openfoam5/scr/lagrangian/intermediate/lnInclude.
