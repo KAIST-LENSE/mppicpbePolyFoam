@@ -1,0 +1,243 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      particleProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solution
+{
+    active          true;
+    coupled         true;
+    transient       yes;
+    cellValueSourceCorrection off; // correction of momentum transferred to the eulerian
+
+    maxCo 1;// Co number
+
+    interpolationSchemes // interpolation schems for the lagrangian particle tracking
+    {
+        rho         cell;
+        U           cellPoint;
+        mu          cell;
+        Tc          cell;
+        eps         cell;
+        alphaMonomer   cell;
+        alphaWater     cell;
+        alphaParticle  cell;
+        alpha       cell;
+        curlUcDt    cell;
+    }
+
+    averagingMethod basic; // 
+
+    integrationSchemes
+    {
+        U           analytical;//Euler;
+    }
+
+    sourceTerms
+    {
+        schemes
+        {
+            U semiImplicit 1;
+        }
+    }
+}
+
+constantProperties
+{
+    rho0            864.5;
+    alphaMax        0.5;   
+}
+
+subModels
+{
+    particleForces
+    {
+        ErgunWenYuDrag
+        {
+            alphac alpha;
+        }
+        gravity;
+        SaffmanMeiLiftForce;
+    }
+
+    injectionModels
+    {
+        model1
+        {
+            type            patchInjection;
+            parcelBasisType fixed;
+            patchName       inlet;
+            U0              (0 0.0173235 0);
+            nParticle       97;
+            parcelsPerSecond 174;//168;
+            I2              0.0354587; //mol/L
+            M               8.57888; //mol/L
+            sizeDistribution
+            {
+                type        fixedValue;
+                fixedValueDistribution
+                {
+                    value   1.907377E-04;
+                }
+            }
+            flowRateProfile constant 1.0;
+            massTotal       1.0;
+            SOI 0;
+            duration 9000;
+            dr 1E-05 ;
+            T  363.15;
+            populationDensity (1.86E+08
+9.66E+08
+4.55E+09
+1.94E+10
+7.48E+10
+2.61E+11
+8.25E+11
+2.36E+12
+6.10E+12
+1.43E+13
+3.02E+13
+5.78E+13
+1.00E+14
+1.57E+14
+2.23E+14
+2.86E+14
+3.33E+14
+3.50E+14
+3.33E+14
+2.86E+14
+2.23E+14
+1.57E+14
+1.00E+14
+5.78E+13
+3.02E+13
+1.43E+13
+6.10E+12
+2.36E+12
+8.25E+11
+2.61E+11);
+        }
+    }
+
+    dispersionModel none;
+
+    patchInteractionModel localInteraction;
+
+    localInteractionCoeffs
+    {
+        patches
+        (
+            wall
+            {
+                type rebound;
+                e    0.97;
+                mu   0.09;
+            }
+
+            wall_rotor
+            {
+                type rebound;
+                e    0.97;
+                mu   0.09;
+            }
+
+            inlet
+            {
+                type rebound;
+                e    0.97;
+                mu   0.09;
+            }
+
+            outlet
+            {
+                type escape;
+            }
+        );
+    }
+
+    heatTransferModel none;
+
+    surfaceFilmModel none;
+
+    packingModel explicit;
+
+    explicitCoeffs
+    {
+        particleStressModel
+        {
+            type HarrisCrighton;
+            alphaPacked 0.6;
+            pSolid 10.0;
+            beta 2.0;
+            eps 1.0e-2;
+        }
+        correctionLimitingMethod
+        {
+            type absolute;
+            e 0.9;
+        }
+    }
+
+    implicitCoeffs
+    {
+        alphaMin 0.0001;
+        rhoMin 864.5;
+        applyLimiting true;
+        applyGravity false;
+        particleStressModel
+        {
+            type HarrisCrighton;
+            alphaPacked 0.6;
+            pSolid 10.0;
+            beta 2.0;
+            eps 1.0e-2;
+        }
+    }
+
+    dampingModel none;//relaxation;
+
+    relaxationCoeffs
+    {
+        timeScaleModel
+        {
+            type nonEquilibrium;
+            alphaPacked 0.58;
+            e 0.9;
+        }
+    }
+
+    isotropyModel stochastic;
+
+    stochasticCoeffs
+    {
+        timeScaleModel
+        {
+            type isotropic;
+            alphaPacked 0.6;
+            e 0.9;
+        }
+    }
+
+    stochasticCollisionModel none;
+
+    radiation off;
+}
+
+
+cloudFunctions
+{}
+
+
+// ************************************************************************* //

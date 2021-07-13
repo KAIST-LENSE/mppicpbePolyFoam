@@ -1,0 +1,3 @@
+mppicPbePolyFoam.C
+
+EXE = $(FOAM_APPBIN)/mppicPbePolyFoam
